@@ -67,3 +67,72 @@ par(mfrow = c(1,1))
 #MSE
 model.sum <- summary(model1)
 (model.sum$sigma) ^ 2
+model2.sum <- summary(model2)
+(model2.sum$sigma) ^ 2
+model1.sum$r.squared
+model2.sum$r.squared
+model2.sum$adj.r.squared
+AIC(model1)
+AIC(model2)
+BIC(model1)
+BIC(model2)
+#Out-of-sample Prediction or test error (MSPE)
+model1.pred.test <- predict(model1, newdata = Boston.test)
+model1.mspe <- mean((model1.pred.test - Boston.test$medv) ^ 2)
+model1.mspe
+model2.pred.test <- predict(model2, newdata = Boston.test)
+model2.mspe <- mean((model2.pred.test - Boston.test$medv) ^ 2)
+model2.#Cross Validation
+model1.glm = glm(medv ~ ., data = Boston)
+cv.glm(data = Boston, glmfit = model1.glm, K = 5)$delta[2]mspe
+#Cross Validation
+model1.glm = glm(medv ~ ., data = Boston)
+cv.glm(data = Boston, glmfit = model1.glm, K = 5)$delta[2]
+model2.glm <- glm(medv ~ . -indus -age, data = Boston)
+cv.glm(data = Boston, glmfit = model2.glm, K = 5)$delta[2]
+#default value of cp = 0.01
+Boston.tree <- rpart(medv ~ ., data = Boston.train)
+Boston.tree
+#Plotting the tree
+rpart.plot(Boston.tree, type = 3, box.palette = c("red", "green"), fallen.leaves = TRUE)
+plotcp(Boston.tree)
+plotcp(Boston.tree)
+#Building a large tree
+Boston.largetree <- rpart(formula = medv ~ ., data = Boston.train, cp = 0.001)
+
+plot(Boston.largetree)
+text(Boston.largetree)
+printcp(Boston.largetree)
+plotcp(Boston.largetree)
+#however, from plotcp, we observe that a tree with more than 7 to 9 splits is not very helpful.
+#further pruning the tree to limit to 9 splits;corresponding cp value from plot is 0.0072
+pruned.tree <- prune(Boston.largetree, cp = 0.0072)
+pruned.tree
+rpart.plot(pruned.tree, type = 3, box.palette = c("red", "green"), fallen.leaves = TRUE, extra = 1)
+#In-sample MSE
+mean((predict(Boston.tree) - Boston.train$medv) ^ 2)      #default tree
+mean((predict(Boston.largetree) - Boston.train$medv) ^ 2)  #large tree
+mean((predict(pruned.tree) - Boston.train$medv) ^ 2)       #pruned tree
+#out-of-sample performance
+#Mean squared error loss for this tree
+mean((predict(Boston.tree, newdata = Boston.test) - Boston.test$medv) ^ 2)  #default tree
+mean((predict(Boston.largetree, newdata = Boston.test) - Boston.test$medv) ^ 2)   #large tree
+mean((predict(pruned.tree, newdata = Boston.test) - Boston.test$medv) ^ 2)     #pruned tree
+#model 1 - not using s() on chas and rad, leaving them as integers
+Boston.gam <- gam(medv ~ s(crim) + s(zn) + s(indus) + s(nox) + s(rm) + s(age) + s(dis) + 
+                    s(tax) + s(ptratio) + s(black) + s(lstat) + chas + rad, data = Boston.train)
+summary(Boston.gam)
+#model 2 - removing s() from functions which are linear
+Boston.gam <- gam(medv ~ s(crim) + zn + s(indus) + s(nox) + s(rm) + age + s(dis) + 
+                    s(tax) + s(ptratio) + black + s(lstat) + chas + rad, data = Boston.train)
+summary(Boston.gam)
+#Model AIC, BIC, mean residual deviance
+AIC(Boston.gam)
+BIC(Boston.gam)
+Boston.gam$deviance
+#plot
+plot(Boston.gam, shade = TRUE, seWithMean = TRUE, scale = 0)
+#In-sample prediction
+(Boston.gam.mse <- mean((predict(Boston.gam) - Boston.train$medv) ^ 2))
+#Out-of-sample prediction - MSPE
+(Boston.gam.mspe <- mean((predict(Boston.gam, newdata = Boston.test) - Boston.test$medv) ^ 2))
