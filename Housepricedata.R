@@ -130,7 +130,7 @@ summary(Boston.gam)
 AIC(Boston.gam)
 BIC(Boston.gam)
 Boston.gam$deviance
-#plot the prediction 
+#plot 
 plot(Boston.gam, shade = TRUE, seWithMean = TRUE, scale = 0)
 #In-sample prediction
 (Boston.gam.mse <- mean((predict(Boston.gam) - Boston.train$medv) ^ 2))
