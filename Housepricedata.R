@@ -136,3 +136,4 @@ plot(Boston.gam, shade = TRUE, seWithMean = TRUE, scale = 0)
 (Boston.gam.mse <- mean((predict(Boston.gam) - Boston.train$medv) ^ 2))
 #Out-of-sample prediction - MSPE
 (Boston.gam.mspe <- mean((predict(Boston.gam, newdata = Boston.test) - Boston.test$medv) ^ 2))
+end
